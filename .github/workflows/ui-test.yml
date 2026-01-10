@@ -17,6 +17,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug git state
+        run: |
+          echo "Branch:"
+          git branch --show-current
+          echo "Last commit:"
+          git log -1 --oneline
 
       - name: Set up JDK
         uses: actions/setup-java@v4
