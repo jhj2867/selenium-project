@@ -47,8 +47,7 @@ jobs:
       # 테스트 실행 + HTML 리포트 생성
       # ===============================
       - name: Run Selenium Cucumber tests
-        run: mvn clean verify -Dcucumber.filter.tags="@smoke" \
-          -Dbuild.number=${{ github.run_number }}
+        run: mvn clean verify -Dcucumber.filter.tags="@smoke" -Dbuild.number=${{ github.run_number }}
 
       # ===============================
       # Artifact 업로드 (선택이지만 유지)
