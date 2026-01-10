@@ -76,13 +76,9 @@
                         </goals>
                         <configuration>
                             <projectName>Selenium Cucumber</projectName>
-                            <outputDirectory>
-                                ${project.build.directory}/cucumber-html
-                            </outputDirectory>
+                            <outputDirectory>target/</outputDirectory>
                             <jsonFiles>
-                                <param>
-                                    ${project.build.directory}/cucumber-report.json
-                                </param>
+                                <param>target/cucumber-report.json</param>
                             </jsonFiles>
                         </configuration>
                     </execution>
