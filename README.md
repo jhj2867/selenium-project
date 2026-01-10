@@ -13,9 +13,9 @@
     - [✓] **Allow GitHub Actions to create and approve pull requests**
 5. **Save** 버튼 클릭
 
-![img.png](img.png)
+![Action setting](images/repository_setting.png)
 
-![img_1.png](img_1.png)
+![email setting](images/email_setting.png)
 
 > 반드시 이 설정을 완료해야 이메일 전송과 workflow 실행이 정상적으로 동작합니다.
 
