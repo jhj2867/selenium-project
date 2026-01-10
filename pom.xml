@@ -76,9 +76,10 @@
                         </goals>
                         <configuration>
                             <projectName>Selenium Cucumber</projectName>
-                            <outputDirectory>target/cucumber-html</outputDirectory>
-                            <cucumberOutput>target/cucumber-report.json</cucumberOutput>
-                            <buildNumber>${env.GITHUB_RUN_NUMBER}</buildNumber>
+                            <outputDirectory>target/</outputDirectory>
+                            <jsonFiles>
+                                <param>target/cucumber-report.json</param>
+                            </jsonFiles>
                         </configuration>
                     </execution>
                 </executions>

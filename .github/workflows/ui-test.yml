@@ -1,63 +1,80 @@
 name: Selenium Cucumber UI Test
 
 on:
-        workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-        ui-test:
-                runs-on: ubuntu-latest
+  ui-test:
+    runs-on: ubuntu-latest
 
-                steps:
-                        - name: Checkout source
-                          uses: actions/checkout@v4
+    # gh-pages push 권한 필수
+    permissions:
+      contents: write
 
-                        - name: Set up JDK
-                          uses: actions/setup-java@v4
-                          with:
-                                  distribution: 'temurin'
-                                  java-version: '11'
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-                        - name: Install Chrome
-                          uses: browser-actions/setup-chrome@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
 
-                        - name: Cache Maven dependencies
-                          uses: actions/cache@v4
-                          with:
-                                  path: ~/.m2
-                                  key: maven-${{ hashFiles('**/pom.xml') }}
-                                  restore-keys: |
-                                          maven-
+      # Chrome은 ubuntu-latest에 기본 설치되어 있으나
+      # 명시적으로 유지 (요청 반영)
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
 
-                        - name: Run Selenium Cucumber tests
-                          run: |
-                                  mvn clean test -Dcucumber.filter.tags="@smoke"
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-
 
-                        - name: Upload Cucumber Report
-                          if: always()
-                          uses: actions/upload-artifact@v4
-                          with:
-                                  name: cucumber-report
-                                  path: target
+      # ===============================
+      # 테스트 실행 + HTML 리포트 생성
+      # ===============================
+      - name: Run Selenium Cucumber tests
+        run: mvn clean verify -Dcucumber.filter.tags="@smoke" \
+          -Dbuild.number=${{ github.run_number }}
 
-                        - name: Generate Cucumber Summary
-                          if: always()
-                          run: |
-                                PASSED=$(jq '[.features[].elements[].steps[] | select(.result.status=="passed")] | length' target/cucumber-report.json)
-                                FAILED=$(jq '[.features[].elements[].steps[] | select(.result.status=="failed")] | length' target/cucumber-report.json)
-                  
-                                  echo "### Cucumber Test Summary" >> $GITHUB_STEP_SUMMARY
-                                  echo "" >> $GITHUB_STEP_SUMMARY
-                                  echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
-                                  echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-                                  echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
-                                  echo "| Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
-                                  echo "" >> $GITHUB_STEP_SUMMARY
-                                  echo "📄 Full HTML Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+      # ===============================
+      # Artifact 업로드 (선택이지만 유지)
+      # ===============================
+      - name: Upload Cucumber Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: target
 
-                        - name: Deploy Cucumber Report to GitHub Pages
-                          if: always()
-                          uses: peaceiris/actions-gh-pages@v4
-                          with:
-                                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                                  publish_branch: gh-pages
-                                  publish_dir: target/cucumber-html
+      # ===============================
+      # Summary (Scenario 기준 통계)
+      # ===============================
+      - name: Generate Cucumber Summary
+        if: always()
+        run: |
+          PASSED=$(jq '[.[] | .elements[] | select(.status=="passed")] | length' target/cucumber-report.json)
+          FAILED=$(jq '[.[] | .elements[] | select(.status=="failed")] | length' target/cucumber-report.json)
+
+          echo "### Cucumber Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📄 Full HTML Report:" >> $GITHUB_STEP_SUMMARY
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+
+      # GitHub Pages 배포
+      - name: Deploy Cucumber Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: target/cucumber-html
