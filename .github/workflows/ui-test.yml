@@ -57,9 +57,9 @@ jobs:
       - name: Generate Cucumber Summary
         if: always()
         run: |
-          PASSED=$(jq '[.[] | .elements[] | select(.status=="passed")] | length' target/cucumber-report.json)
-          FAILED=$(jq '[.[] | .elements[] | select(.status=="failed")] | length' target/cucumber-report.json)
-
+          PASSED=$(jq '[.[] | .elements[] | select(.type=="scenario") | select([.steps[].result.status] | index("failed") | not)] | length' target/cucumber-report.json)
+          FAILED=$(jq '[.[] | .elements[] | select(.type=="scenario") | select([.steps[].result.status] | index("failed"))] | length' target/cucumber-report.json)
+    
           echo "### Cucumber Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
@@ -67,8 +67,7 @@ jobs:
           echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
           echo "| Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📄 Full HTML Report:" >> $GITHUB_STEP_SUMMARY
-          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+          echo "📄 Full HTML Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
 
       # GitHub Pages 배포
       - name: Deploy Cucumber Report to GitHub Pages
