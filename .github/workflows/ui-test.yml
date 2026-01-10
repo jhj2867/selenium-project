@@ -70,3 +70,24 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: target
+
+      - name: Send email notification
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "[CI] Selenium Test Result - ${{ job.status }}"
+          to: your_email@gmail.com
+          from: GitHub Actions <${{ secrets.SMTP_USERNAME }}>
+          body: |
+            Selenium Cucumber UI Test finished.
+
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Status: ${{ job.status }}
+
+            Report:
+            https://jhj2867.github.io/selenium-project/
