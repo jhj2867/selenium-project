@@ -34,8 +34,6 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      # Chrome은 ubuntu-latest에 기본 설치되어 있으나
-      # 명시적으로 유지 (요청 반영)
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
@@ -47,15 +45,11 @@ jobs:
           restore-keys: |
             maven-
 
-      # ===============================
       # 테스트 실행 + HTML 리포트 생성
-      # ===============================
       - name: Run Selenium Cucumber tests
         run: mvn clean verify -Dcucumber.filter.tags="@smoke" -Dbuild.number=${{ github.run_number }}
 
-      # ===============================
-      # Artifact 업로드 (선택이지만 유지)
-      # ===============================
+      # Artifact 업로드
       - name: Upload Cucumber Report Artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,6 +69,7 @@ jobs:
           publish_branch: gh-pages
           publish_dir: target
 
+      # email 전송
       - name: Send email notification
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -94,4 +89,4 @@ jobs:
             Status: ${{ job.status }}
 
             Report:
-            https://jhj2867.github.io/selenium-project/
+              https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
