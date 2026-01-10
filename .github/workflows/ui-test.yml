@@ -1,0 +1,50 @@
+name: Selenium Cucumber UI Test
+
+on:
+        push:
+                branches: [ "main" ]
+        pull_request:
+                branches: [ "main" ]
+        workflow_dispatch:   # 수동 실행 허용
+
+jobs:
+        ui-test:
+                runs-on: ubuntu-latest
+
+                steps:
+                        # 1. 소스 코드 체크아웃
+                        - name: Checkout source
+                          uses: actions/checkout@v4
+
+                        # 2. Java 환경 설정
+                        - name: Set up JDK
+                          uses: actions/setup-java@v4
+                          with:
+                                  distribution: 'temurin'
+                                  java-version: '11'
+
+                        # 3. Chrome 설치 (Selenium용)
+                        - name: Install Chrome
+                          uses: browser-actions/setup-chrome@v1
+
+                        # 4. Maven 캐시 (속도 개선)
+                        - name: Cache Maven dependencies
+                          uses: actions/cache@v4
+                          with:
+                                  path: ~/.m2
+                                  key: maven-${{ hashFiles('**/pom.xml') }}
+                                  restore-keys: |
+                                          maven-
+
+                        # 5. UI 테스트 실행
+                        - name: Run Selenium Cucumber tests
+                          run: |
+                                  mvn clean test -Dcucumber.filter.tags="@smoke"
+
+                        # 6. 테스트 리포트 아카이빙 (실패해도 저장)
+                        - name: Upload Cucumber Report
+                          if: always()
+                          uses: actions/upload-artifact@v4
+                          with:
+                                  name: cucumber-report
+                                  path: target
