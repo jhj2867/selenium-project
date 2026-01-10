@@ -80,7 +80,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "[CI] Selenium Test Result - ${{ job.status }}"
-          to: your_email@gmail.com
+          to: jhj2867@gmail.com
           from: GitHub Actions <${{ secrets.SMTP_USERNAME }}>
           body: |
             Selenium Cucumber UI Test finished.
