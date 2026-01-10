@@ -5,12 +5,14 @@
 
 ---
 
+<h3 align="center">Selenium Cucumber CI/CD Pipeline</h3>
+
 ```mermaid
 flowchart TD
     A[email 입력 후 Workflow 실행] --> B[UI 테스트]
     B --> C[Report 생성]
     C --> D[GitHub Pages 생성]
-    C --> E[Email 발송]
+    D --> E[Email 발송]
 ```
 
 ## GitHub Actions 사전 설정 (필수)
