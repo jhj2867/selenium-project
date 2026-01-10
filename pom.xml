@@ -63,28 +63,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
             </plugin>
-            <plugin>
-                <groupId>net.masterthought</groupId>
-                <artifactId>maven-cucumber-reporting</artifactId>
-                <version>5.7.8</version>
-                <executions>
-                    <execution>
-                        <id>cucumber-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <projectName>Selenium Cucumber</projectName>
-                            <outputDirectory>target/</outputDirectory>
-                            <jsonFiles>
-                                <param>target/cucumber-report.json</param>
-                            </jsonFiles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
 
     </build>
