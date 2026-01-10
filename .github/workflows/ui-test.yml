@@ -59,6 +59,9 @@ jobs:
           name: cucumber-report
           path: target/cucumber-report.html
 
+      - name: Change report.html to index.html
+        run: cp target/cucumber.html target/index.html
+
       # GitHub Pages 배포
       - name: Deploy Cucumber Report to GitHub Pages
         if: always()
