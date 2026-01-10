@@ -2,6 +2,10 @@ name: Selenium Cucumber UI Test
 
 on:
   workflow_dispatch:
+    inputs:
+      email:
+        description: 'Recipient email'
+        required: true
 
 jobs:
   ui-test:
@@ -80,7 +84,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "[CI] Selenium Test Result - ${{ job.status }}"
-          to: jhj2867@gmail.com
+          to: ${{ github.event.inputs.email }}
           from: GitHub Actions <${{ secrets.SMTP_USERNAME }}>
           body: |
             Selenium Cucumber UI Test finished.
