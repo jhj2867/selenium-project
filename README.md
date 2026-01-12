@@ -66,3 +66,35 @@ flowchart TD
 2. 우클릭 후 TestRunner.java 실행 클릭 (IntelliJ IDE 기준.)
 3. /target/cucumber-report.html 에서 레포트 확인 가능합니다.
 
+---
+## auto testcase creator (선택 과제)
+
+<h3 align="center">Auto testcase creator flow</h3>
+
+```mermaid
+flowchart TD
+    A[Workflow Dispatch 실행] --> B[입력 수집]
+
+    B -->|Text| C1[요구사항 텍스트]
+    B -->|File| C2[요구사항 파일]
+    B -->|Link| C3[요구사항 URL]
+
+    C1 --> D[요구사항 정규화]
+    C2 --> D
+    C3 --> D
+
+    D --> E[LLM API 호출]
+    E --> F[테스트 케이스 분석 및 구조화]
+
+    F --> G1[CSV 생성]
+    F --> G2[TEXT 생성]
+    F --> G3[Zephyr Test Case 생성]
+
+    G1 --> H[결과 저장]
+    G2 --> H
+    G3 --> H
+
+    H --> I[Artifact 업로드 또는 Commit]
+
+```
+v
